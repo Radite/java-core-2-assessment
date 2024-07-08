@@ -79,5 +79,19 @@ public class YellowSubmarine {
             System.out.println(word);
         }
 
+        // Remove "Yellow" and "Submarine"
+        Iterator<String> iterator = wordsList.iterator();
+        while (iterator.hasNext()) {
+            String word = iterator.next();
+            if (word.equals("yellow") || word.equals("submarine")) {
+                iterator.remove();
+            }
+        }
+            
+        System.out.println("\nResulting Words After Removal:");
+        for (String word : wordsList) {
+            System.out.println(word);
+        }
+
     }
 }
