@@ -1,5 +1,4 @@
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class YellowSubmarine {
     public static void main(String[] args) {
@@ -45,19 +44,40 @@ public class YellowSubmarine {
         // Remove commas and newlines and convert to lowercase
         String regexLyrics = lyrics.replaceAll("[,\n()!]", " ").toLowerCase();
 
-        // Create array of words
-        String[] words = regexLyrics.split("\\s+");
+        // Create list of words
+        List<String> wordsList = new ArrayList<>(Arrays.asList(regexLyrics.split("\\s+")));
 
         // Count Occurrence of each word
         Map<String, Integer> wordCount = new HashMap<>();
 
-        for (String word : words) {
+        for (String word : wordsList) {
             wordCount.put(word, wordCount.getOrDefault(word, 0) + 1);
         }
-
+        
         // Print word counts
+        System.out.println("Word Counts:");
         for (Map.Entry<String, Integer> entry : wordCount.entrySet()) {
             System.out.println(entry.getKey() + ": " + entry.getValue());
         }
+
+        // Remove duplicate words using a set
+        Set<String> uniqueWordsSet = new HashSet<>(wordsList);
+        List<String> uniqueWordsList = new ArrayList<>(uniqueWordsSet);
+
+        // Print unique words
+        System.out.println("\nUnique Words:");
+        for (String word : uniqueWordsList) {
+            System.out.println(word);
+        }
+
+        // Sort words by their length
+        uniqueWordsList.sort(Comparator.comparingInt(String::length));
+
+        // Print sorted words
+        System.out.println("\nSorted Words by Length:");
+        for (String word : uniqueWordsList) {
+            System.out.println(word);
+        }
+
     }
 }
