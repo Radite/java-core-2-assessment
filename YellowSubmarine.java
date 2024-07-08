@@ -1,6 +1,16 @@
-import java.util.*;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+class BeatlesException extends Exception {
+    public BeatlesException(String message) {
+        super(message);
+    }
+}
 
 public class YellowSubmarine {
+    private static final String FILENAME = "beatles_yellow_submarine.txt";
+
     public static void main(String[] args) {
         String lyrics = """
                 In the town where I was born
@@ -41,57 +51,46 @@ public class YellowSubmarine {
                 Yellow submarine, yellow submarine
                 """;
 
-        // Remove commas and newlines and convert to lowercase
-        String regexLyrics = lyrics.replaceAll("[,\n()!]", " ").toLowerCase();
+        // Save song to file
+        saveToFile(lyrics);
 
-        // Create list of words
-        List<String> wordsList = new ArrayList<>(Arrays.asList(regexLyrics.split("\\s+")));
+        // Read song from file
+        String readLyrics = readFromFile();
 
-        // Count Occurrence of each word
-        Map<String, Integer> wordCount = new HashMap<>();
-
-        for (String word : wordsList) {
-            wordCount.put(word, wordCount.getOrDefault(word, 0) + 1);
+        // Verify if a random string can be found in the song
+        String randomString = "submarine";
+        try {
+            verifyStringInSong(readLyrics, randomString);
+        } catch (BeatlesException e) {
+            System.out.println(e.getMessage());
         }
-        
-        // Print word counts
-        System.out.println("Word Counts:");
-        for (Map.Entry<String, Integer> entry : wordCount.entrySet()) {
-            System.out.println(entry.getKey() + ": " + entry.getValue());
+    }
+
+    public static void saveToFile(String text) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILENAME))) {
+            writer.write(text);
+        } catch (IOException e) {
+            System.err.println("Error writing to file: " + e.getMessage());
         }
-
-        // Remove duplicate words using a set
-        Set<String> uniqueWordsSet = new HashSet<>(wordsList);
-        List<String> uniqueWordsList = new ArrayList<>(uniqueWordsSet);
-
-        // Print unique words
-        System.out.println("\nUnique Words:");
-        for (String word : uniqueWordsList) {
-            System.out.println(word);
-        }
-
-        // Sort words by their length
-        uniqueWordsList.sort(Comparator.comparingInt(String::length));
-
-        // Print sorted words
-        System.out.println("\nSorted Words by Length:");
-        for (String word : uniqueWordsList) {
-            System.out.println(word);
-        }
-
-        // Remove "Yellow" and "Submarine"
-        Iterator<String> iterator = wordsList.iterator();
-        while (iterator.hasNext()) {
-            String word = iterator.next();
-            if (word.equals("yellow") || word.equals("submarine")) {
-                iterator.remove();
+    }
+    public static String readFromFile() {
+        StringBuilder content = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILENAME))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append("\n");
             }
+        } catch (IOException e) {
+            System.err.println("Error reading from file: " + e.getMessage());
         }
-            
-        System.out.println("\nResulting Words After Removal:");
-        for (String word : wordsList) {
-            System.out.println(word);
-        }
+        return content.toString();
+    }
 
+    public static void verifyStringInSong(String song, String randomString) throws BeatlesException {
+        if (!song.contains(randomString)) {
+            throw new BeatlesException(randomString + " was not found in the song.");
+        } else {
+            System.out.println(randomString + " was found in the song.");
+        }
     }
 }
